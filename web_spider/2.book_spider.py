@@ -1,6 +1,9 @@
-from http_request import http_request
+from tool import http_request
+from tool import my_filter
+from tool import my_map
 import time
-# 
+
+# 笔趣阁
 class Downloader:
     base_url = ''
     book_path = ''
@@ -9,6 +12,7 @@ class Downloader:
     out_path = ''
     directorys = []
     rewrite_flag = True
+    search_list = []
 
     def __init__(self, base_url, book_path, book_name='小说', out_path='./out') -> None:
         self.base_url = base_url
@@ -62,8 +66,23 @@ class Downloader:
             f.writelines(text)
             f.write('\n\n')
 
+    # 搜索小说 需要绕过反爬虫验证
+    def search_book(self, book_name):
+        search_url = 'https://www.biqudd.com/modules/article/search.php?searchkey=%C8%FD%CC%E5'
+        response = http_request(search_url)
+        book_list = response.select('.novelslistss a')
+        def f(i):
+            return book_name in i.string
+        filtered_list = my_filter(book_list, f)
+        def mf(i):
+            return {'title': i.string, 'url': i.get('href')}
+        self.search_list = my_map(filtered_list, mf)
+        print(self.search_list)
+        pass
+
 
 BASE_URL = 'https://www.biqudd.com'
 BOOK_PATH = '/86_86695'
-dl = Downloader(base_url=BASE_URL, book_path=BOOK_PATH,book_name='三体')
-dl.start_download()
+dl = Downloader(base_url=BASE_URL, book_path=BOOK_PATH, book_name='三体')
+# dl.start_download()
+dl.search_book('三体')
