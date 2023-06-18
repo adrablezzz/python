@@ -1,0 +1,1 @@
+open('./out/三体.txt', 'w').close()
