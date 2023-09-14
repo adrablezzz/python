@@ -6,6 +6,7 @@ import time, sys
 from bs4 import BeautifulSoup
 
 # 笔趣阁
+# 有反爬虫验证页面，cookie和user-Agent会过期
 class Downloader:
     book_url = ''
     book_name = ''
