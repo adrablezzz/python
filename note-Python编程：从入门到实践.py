@@ -224,5 +224,146 @@ b1 = Baby('fufu')
 
 
 
-
 # 7.pygame
+
+
+# 8.数据可视化
+# 8.1折线图 plot
+import matplotlib.pyplot as plt 
+# length = [1, 2, 3, 4, 5]
+# squares = [1, 4, 9, 16, 25]
+# # plot折线图: 
+# plt.plot(length, squares, linewidth=5)
+# plt.title('spuare S/L', fontsize=24)
+# plt.xlabel('L', fontsize=14)
+# plt.ylabel('S', fontsize=14)
+# # 刻度标记大小
+# plt.tick_params(axis='both', labelsize=14)
+# plt.show()
+
+# 8.2散点图 scatter
+# s尺寸
+# 单点
+# plt.scatter(2, 4, s=200)
+# 多点
+# x_values = list(range(1, 1001))
+# y_values = [x**2 for x in x_values]
+# # edgecolors轮廓颜色 c线颜色
+# # plt.scatter(x_values, y_values, edgecolors='none', c=(1,0,0), s=5)
+# # 颜色映射
+# plt.scatter(x_values, y_values, edgecolors='none', s=5, c=y_values, cmap=plt.cm.Blues)
+# plt.title('y and x', fontsize=24)
+# plt.ylabel('y', fontsize=14)
+# plt.xlabel('x', fontsize=14)
+# plt.tick_params(axis='both', which='major', labelsize=14)
+# plt.axis([0, 1100, 0, 1100000])
+# plt.show()
+# 保存图表
+# plt.savefig('spuares_plot.png', bbox_inches='tight')
+
+# 8.3 随机漫步
+from random import choice
+class RandomWalk():
+  def __init__(self, num_points=5000) -> None:
+    self.num_points = num_points
+    # 起点0,0
+    self.x_values = [0]
+    self.y_values = [0]
+
+  # 选择方向
+  def fill_walk(self):
+    # 循环漫步直到长度
+    while len(self.x_values) < self.num_points:
+      # 决定方向和步数
+      x_direction = choice([-1, 1])
+      x_distance = choice([0, 1, 2, 3, 4])
+      x_step = x_direction * x_distance
+      y_direction = choice([-1,1])
+      y_distance = choice([0, 1, 2, 3, 4])
+      y_step = y_direction * y_distance
+      # 拒接原地踏步
+      if  x_step == 0 and y_step == 0:
+        continue
+      # 计算下一步
+      next_x = self.x_values[-1] + x_step
+      next_y = self.y_values[-1] + y_step
+      self.x_values.append(next_x)
+      self.y_values.append(next_y)
+
+def run_random_walk():
+  rw = RandomWalk(50000)
+  rw.fill_walk()
+  # 屏幕大小
+  plt.figure(num=1, figsize=(10,6))
+  # 绘图
+  rwp = plt.subplot()
+  point_numbers = list(range(rw.num_points))
+  rwp.scatter(rw.x_values, rw.y_values, s=1, c=point_numbers, cmap=plt.cm.Blues, edgecolors='none') #绘制颜色
+  # 突出起点和终点
+  rwp.scatter(0, 0, edgecolors='none', c='green', s=100)
+  rwp.scatter(rw.x_values[-1], rw.y_values[-1], edgecolors='none', c='red', s=100)
+   # 隐藏坐标 
+  rwp.get_xaxis().set_visible(False)
+  rwp.get_yaxis().set_visible(False)
+  
+  plt.show()
+
+# run_random_walk()
+
+# 8.4 Pygal扔骰子
+from random import randint
+class Die():
+  def __init__(self, num_sides=6) -> None:
+    self.num_sides = num_sides
+  
+  def roll(self):
+    return randint(1, self.num_sides)
+
+import pygal
+def run_die():
+  die = Die()
+  results = []
+  for i in range(1000):
+    result = die.roll()
+    results.append(result)
+  # print(results)
+  # 分析结果
+  frequencies = []
+  for value in range(1, die.num_sides+1):
+    frequency = results.count(value)
+    frequencies.append(frequency)
+  print(frequencies)
+  # 数据可视化
+  hist = pygal.Bar()
+  hist._title = 'Results of roll D6 die 1000times'
+  hist.x_labels = ['1', '2', '3', '4', '5', '6']
+  hist.x_title = 'Result'
+  hist.y_title = 'Frequency of result'
+  hist.add('D6', frequencies)
+  hist.render_to_file('die_visual.svg')
+# run_die()
+
+# 9.下载数据
+# 9.1 CSV文件格式
+import csv
+def run_csv():
+  filename = 'test.csv'
+  with open(filename) as f:
+    reader = csv.reader(f)
+    header_row = next(reader)
+    # print(header_row)
+    # for index, column_header in enumerate(header_row):
+    #   print(index, column_header)
+    ages = []
+    for row in reader:
+      ages.append(int(row[1]))
+    print(ages)
+    # 绘制图表
+    fig = plt.figure(dpi=128, figsize=(10,6))
+    plt.plot(ages, c='red')
+    plt.title('ages', fontsize=24)
+    plt.xlabel('', fontsize=16)
+    plt.ylabel('age', fontsize=16)
+    plt.tick_params(axis='both', which='major', labelsize=16)
+    plt.show()
+# run_csv()
