@@ -304,5 +304,53 @@ lasso应用到boston房价数据集上，略
 最常见的两种分类算法：
   Logistic回归(linear_model.LogisticRegression) 
   线性支持向量机(linear support vector machine, 线性SVM)
+略
+'''
+# 3.3.3.6 用于多分类的线性模型 略
 
+# 3.3.4 朴素贝叶斯分类器
+'''
+与线性模型相似，训练速度更快，泛化性稍差
+不理解
+'''
+def fun54():
+  X = np.array([
+    [0, 1, 0, 1],
+    [1, 0, 1, 1],
+    [0, 0, 0, 1],
+    [1, 0, 1, 0],
+  ])
+  y = np.array([0, 1, 0, 1])
+  counts = {}
+  for label in np.unique(y):
+    # X第一列以 0 1 分类求和 
+    counts[label] = X[y==label].sum(axis=0)
+  print('Feature counts: \n{}'.format(counts))
+# fun54()
+
+# 3.3.5 决策树
+'''
+本质是通过大量if/else学习判断
+'''
+def fun55():
+  from sklearn.datasets import load_breast_cancer
+  from sklearn.tree import DecisionTreeClassifier
+  cancer = load_breast_cancer()
+  X_train, X_test, y_train, y_test = train_test_split(cancer.data, cancer.target, stratify=cancer.target, random_state=42)
+  # 剪枝设置max_depth,提供模型泛化度
+  tree = DecisionTreeClassifier(max_depth=4,random_state=0)
+  tree.fit(X_train, y_train)
+  print('Accuracy on train set: {:.3f}'.format(tree.score(X_train, y_train)))
+  print('Accuracy on test set:  {:.3f}'.format(tree.score(X_test, y_test)))
+  from sklearn.tree import export_graphviz
+  export_graphviz(tree, out_file='tree.dot', class_names=['malignant', 'benign'], feature_names=cancer.feature_names, impurity=False, filled=True)
+  # 安装graphviz可视化显示 略
+  # 树的特征重要性
+  print('Feature importance: \n{}'.format(tree.feature_importances_))
+# fun55()
+
+# 3.3.6 决策树集成
+'''
+随机森林：构造多颗决策树，取平均值
+梯度提升决策树
 '''
