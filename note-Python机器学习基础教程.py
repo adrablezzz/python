@@ -259,3 +259,50 @@ y = w[0] * x[0] + b
 # mglearn.plots.plot_linear_regression_wave()
 # plt.show()
 # 3.3.3.2 线性回归(最小二乘法)
+from sklearn.linear_model import LinearRegression
+X, y = mglearn.datasets.make_wave(n_samples=60)
+X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=42)
+lr = LinearRegression().fit(X_train, y_train)
+print('斜率lr.coef_: {}'.format(lr.coef_))
+print('截距lr.intercept_: {}'.format(lr.intercept_))
+print('train set score: {:.2f}'.format(lr.score(X_train, y_train)))
+print('test set score: {:.2f}'.format(lr.score(X_test, y_test)))
+# print('X_train: {}, y_train: {}, X_test: {}, y_test: {}'.format(X_train.shape, y_train.shape, X_test.shape, y_test.shape))
+# boston略
+# 3.3.3.3 岭回归 linear_model.Ridge 
+# 与最小二乘法相同，只是要求系数w尽可能小
+from sklearn.linear_model import Ridge
+ridge = Ridge(alpha=1).fit(X_train, y_train) # wave数据集；alpha模型简单性和训练程度参数默认1
+print('ridge train score: {:.2f}'.format(ridge.score(X_train, y_train)))
+print('ridge test score: {:.2f}'.format(ridge.score(X_test, y_test)))
+# alpha值的影响
+''' fail
+plt.plot(ridge.coef_, 's', label='Ridge alpha=1')
+plt.plot(ridge.coef_, '^', label='Ridge alpha=10')
+plt.plot(ridge.coef_, 'v', label='Ridge alpha=0.1')
+plt.plot(lr.coef_, 'o', label='LinearRegression')
+plt.xlabel('Coefficient index')
+plt.ylabel('Coefficient magnitude')
+plt.hlines(0, 0, len(lr.coef_))
+plt.ylim(-25, 25)
+plt.legend()
+plt.show()
+'''
+# 学习曲线
+# mglearn.plots.plot_ridge_n_samples()
+# plt.show()
+
+# 3.3.3.4 lasso 正则化的线性回归
+'''
+与岭回归相同，lasso也是约束系数使其接近于0，但使用L1正则化方法
+L1正则化结果：使用L1时某些系数刚好为0(这说明某些特征被模型完全忽略)
+lasso应用到boston房价数据集上，略
+'''
+# 3.3.3.5 用于分类的线性模型
+'''
+预测：y = w[0] * x[0] + w[1] * x[1] + ... + w[p] * x[p] + b > 0
+最常见的两种分类算法：
+  Logistic回归(linear_model.LogisticRegression) 
+  线性支持向量机(linear support vector machine, 线性SVM)
+
+'''
