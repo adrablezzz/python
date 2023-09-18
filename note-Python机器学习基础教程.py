@@ -337,7 +337,7 @@ def fun55():
   from sklearn.tree import DecisionTreeClassifier
   cancer = load_breast_cancer()
   X_train, X_test, y_train, y_test = train_test_split(cancer.data, cancer.target, stratify=cancer.target, random_state=42)
-  # 剪枝设置max_depth,提供模型泛化度
+  # 剪枝:设置max_depth,提高模型泛化度
   tree = DecisionTreeClassifier(max_depth=4,random_state=0)
   tree.fit(X_train, y_train)
   print('Accuracy on train set: {:.3f}'.format(tree.score(X_train, y_train)))
@@ -352,5 +352,53 @@ def fun55():
 # 3.3.6 决策树集成
 '''
 随机森林：构造多颗决策树，取平均值
-梯度提升决策树
+梯度提升决策树: 合并多个决策树来构建更为强大的模型
+优先随机森林，如果预测时间太长或对模型进度小数点后第二位提升也很重要，切换梯度提升
 '''
+def fun56():
+  from sklearn.ensemble import RandomForestClassifier
+  from sklearn.datasets import make_moons
+  X, y = make_moons(n_samples=100, noise=0.25, random_state=3)
+  X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, random_state=42)
+  forest = RandomForestClassifier(n_estimators=5, random_state=2)
+  forest.fit(X_train, y_train)
+  # 可视化
+  fig, axes = plt.subplots(2, 3, figsize=(20, 10))
+  for i, (ax, tree) in enumerate(zip(axes.ravel(), forest.estimators_)):
+    ax.set_title('Tree {}'.format(i))
+    mglearn.plots.plot_tree_partition(X_train, y_train, tree, ax=ax)
+  mglearn.plots.plot_2d_separator(forest, X_train, fill=True, ax=axes[-1, -1], alpha=.4)
+  axes[-1, -1].set_title('Random Forest')
+  mglearn.discrete_scatter(X_train[:, 0], X_train[:, 1], y_train)
+  plt.show()
+# fun56()
+from sklearn.datasets import load_breast_cancer
+from sklearn.ensemble import RandomForestClassifier
+cancer = load_breast_cancer()
+def fun70():
+  X_train, X_test, y_train, y_test = train_test_split(cancer.data, cancer.target, random_state=0)
+  forest = RandomForestClassifier(n_estimators=100, random_state=0)
+  forest.fit(X_train, y_train)
+  print('Accuracy on train set: {:.3f}'.format(forest.score(X_train, y_train)))
+  print('Accuracy on test set: {:.3f}'.format(forest.score(X_test, y_test)))
+  def plot_feature_importances_cancer(model):
+    n_features = cancer.data.shape[1]
+    plt.barh(range(n_features),model.feature_importances_,align='center')
+    plt.yticks(np.arange(n_features),cancer.feature_names)
+    plt.xlabel("Feature importance")
+    plt.ylabel("Feature")
+    plt.show()
+  plot_feature_importances_cancer(forest)
+# fun70()
+# 梯度提升决策树
+def fun72():
+  from sklearn.ensemble import GradientBoostingClassifier
+  X_train, X_test, y_train, y_test = train_test_split(cancer.data, cancer.target, random_state=0)
+  # gbrt = GradientBoostingClassifier(random_state=0, max_depth=1) #剪枝
+  gbrt = GradientBoostingClassifier(random_state=0, learning_rate=0.01) #也可以降低学习率
+  gbrt.fit(X_train, y_train)
+  print('Accuracy on gbrt train set: {:.3f}'.format(gbrt.score(X_train, y_train)))
+  print('Accuracy on gbrt test set: {:.3f}'.format(gbrt.score(X_test, y_test)))
+# fun72()
+
+# 3.3.7 核支持向量机
