@@ -150,6 +150,11 @@ K近邻分类算法(KNeighborsClassifier):
 # 3.3.1 样本数据集
 # forge二分类数据集
 # 生成数据集 forge
+'''
+X[:, 0]表示对Numpy数组X第一个维度取所有，第二个维度取第0个索引的数据
+X = Numpy([[1,2],[3,4],[5,6]])
+X[:, 0] => [1, 3, 5]
+'''
 # X, y = mglearn.datasets.make_forge()
 # mglearn.discrete_scatter(X[:, 0], X[:, 1], y)
 # plt.legend(['Class 0', 'Class 1'], loc=4)
@@ -401,4 +406,70 @@ def fun72():
   print('Accuracy on gbrt test set: {:.3f}'.format(gbrt.score(X_test, y_test)))
 # fun72()
 
-# 3.3.7 核支持向量机
+# 3.3.7 核支持向量机 SVM
+from sklearn.datasets import make_blobs
+def fun75():
+  X, y = make_blobs(centers=4, random_state=8)
+  y = y % 2
+  mglearn.discrete_scatter(X[:, 0], X[:, 1], y)
+  plt.xlabel('Feature 0')
+  plt.ylabel('Feature 1')
+  plt.show()
+# fun75()
+# 线性SVM给出决策边界
+from sklearn.svm import LinearSVC
+def fun76():
+  X, y = make_blobs(centers=4, random_state=8)
+  y = y % 2
+  linear_svm = LinearSVC().fit(X, y)
+  mglearn.plots.plot_2d_separator(linear_svm, X)
+  mglearn.discrete_scatter(X[:, 0], X[:, 1], y)
+  plt.xlabel('Feature 0')
+  plt.ylabel('Feature 1')
+  plt.show()
+# fun76()
+# 拓展：添加第二特征的平方
+from mpl_toolkits.mplot3d import Axes3D, axes3d
+def fun77():
+  X, y = make_blobs(centers=4, random_state=8)
+  y = y % 2
+  X_new = np.hstack([X, X[:, 1:] ** 2])
+  figure = plt.figure()
+  # 3d可视化
+  ax = Axes3D(figure, elev=-152, azim=-26, auto_add_to_figure=False)
+  figure.add_axes(ax)
+  # # 先画出y=0的点，再画出y=1的点
+  mask = y == 0 # mask数组内的值x依次执行x==0 -> mask=[False,True...]
+  ax.scatter(X_new[mask, 0], X_new[mask, 1], X_new[mask, 2], c='b', cmap=mglearn.cm2, s=60, edgecolor='k')
+  ax.scatter(X_new[~mask, 0], X_new[~mask, 1], X_new[~mask, 2], c='r', marker='^', cmap=mglearn.cm2, s=60, edgecolor='k')
+  ax.set_xlabel("feature0")
+  ax.set_ylabel("feature1")
+  ax.set_zlabel("feature1**2")
+  plt.show()
+# fun77()
+# svm_3d显示决策边界
+def fun78():
+  X, y = make_blobs(centers=4, random_state=8)
+  y = y % 2
+  X_new = np.hstack([X, X[:, 1:] ** 2])
+  liner_3d_svm = LinearSVC().fit(X_new, y)
+  coef, intercept = liner_3d_svm.coef_.ravel(), liner_3d_svm.intercept_
+
+  figure = plt.figure()
+  # 3d可视化
+  ax = Axes3D(figure, elev=-152, azim=-26, auto_add_to_figure=False)
+  figure.add_axes(ax)
+  xx = np.linspace(X_new[:, 0].min() - 2, X_new[:, 0].max() + 2, 50)
+  yy = np.linspace(X_new[:, 1].min() - 2, X_new[:, 1].max() + 2, 50)
+  XX, YY = np.meshgrid(xx, yy)
+  ZZ = (coef[0] ** XX + coef[1] ** YY + intercept) / -coef[2]
+  ax.plot_surface(XX, YY, ZZ, rstride=8, cstride=8, alpha=.3)
+  # # 先画出y=0的点，再画出y=1的点
+  mask = y == 0 # mask数组内的值x依次执行x==0 -> mask=[False,True...]
+  ax.scatter(X_new[mask, 0], X_new[mask, 1], X_new[mask, 2], c='b', cmap=mglearn.cm2, s=60, edgecolor='k')
+  ax.scatter(X_new[~mask, 0], X_new[~mask, 1], X_new[~mask, 2], c='r', marker='^', cmap=mglearn.cm2, s=60, edgecolor='k')
+  ax.set_xlabel("feature0")
+  ax.set_ylabel("feature1")
+  ax.set_zlabel("feature1**2")
+  plt.show()
+fun78()
