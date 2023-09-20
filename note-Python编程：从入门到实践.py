@@ -371,3 +371,27 @@ def run_csv():
     plt.tick_params(axis='both', which='major', labelsize=16)
     plt.show()
 # run_csv()
+
+
+# 10 numpy
+import numpy as np
+a = np.array([
+  [1, 2, 3], 
+  [3,2,1],
+  [7, 8, 9]])
+b = np.array([1, 2, 3])
+print(a.min()) #最小值
+print(a.min(axis=0)) #每列中最小值[]
+print(a.min(axis=1)) #每行中最小值[]
+print(a.max())
+print(a.max(0))
+print(a.max(1))
+print('\n')
+print(a.mean()) #均值
+print(a.mean(0))
+print(a.mean(1))
+print('\n')
+print(a + b) #a每行与b相加
+print(a - b)
+print(a * b)
+print(a / b)
