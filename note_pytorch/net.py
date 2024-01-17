@@ -340,6 +340,8 @@ for epoch in range(1000):
 	loss = loss_fn(model(trX),trY).item()
 	print(epoch, loss)
 	
+# 保存模型
+torch.save(model, 'model.pth')
 
 # 最后用我们训练好的模型尝试在1-100上玩fizzbuzz游戏
 testX = torch.Tensor([binary_encode(i, NUM_DIGITS) for i in range(1, 101)])
